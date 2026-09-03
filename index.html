@@ -1917,30 +1917,33 @@
     }
 
     function applyMasterModeUI() {
-      // floating bar removed
-          floatingBar.classList.add('flex');
-        }
+      const editBtns = document.querySelectorAll('.master-edit-btn');
+      const logoutBtn = document.getElementById('btn-master-logout-top');
+      const triggerBtn = document.getElementById('btn-master-trigger');
+
+      if (isMaster) {
         editBtns.forEach(btn => {
           btn.classList.remove('hidden');
           btn.classList.add('flex');
         });
-        lucide.createIcons();
-        const triggerBtn = document.getElementById('btn-master-trigger');
         if (triggerBtn) {
           triggerBtn.innerHTML = '<i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-300"></i> <span>Mestre Ativo</span>';
         }
-      } else {
-        if (floatingBar) {
-          floatingBar.classList.add('hidden');
-          floatingBar.classList.remove('flex');
+        if (logoutBtn) {
+          logoutBtn.classList.remove('hidden');
+          logoutBtn.classList.add('inline-flex');
         }
+      } else {
         editBtns.forEach(btn => {
           btn.classList.add('hidden');
           btn.classList.remove('flex');
         });
-        const triggerBtn = document.getElementById('btn-master-trigger');
         if (triggerBtn) {
-          triggerBtn.innerHTML = '<i data-lucide="shield-check" class="w-3.5 h-3.5"></i> <span>Login Mestre</span>';
+          triggerBtn.innerHTML = '<i data-lucide="shield-check" class="w-3.5 h-3.5"></i> <span>Mestre 🔒</span>';
+        }
+        if (logoutBtn) {
+          logoutBtn.classList.add('hidden');
+          logoutBtn.classList.remove('inline-flex');
         }
       }
       lucide.createIcons();
@@ -2821,9 +2824,11 @@
 
     // Atualizar UI ao alternar Modo Mestre
     function applyMasterModeUI() {
-      // floating bar removed
-          floatingBar.classList.add('flex');
-        }
+      const editBtns = document.querySelectorAll('.master-edit-btn');
+      const triggerBtn = document.getElementById('btn-master-trigger');
+      const logoutTopBtn = document.getElementById('btn-master-logout-top');
+
+      if (isMaster) {
         editBtns.forEach(btn => {
           btn.classList.remove('hidden');
           btn.classList.add('flex');
@@ -2837,10 +2842,6 @@
           logoutTopBtn.classList.add('flex');
         }
       } else {
-        if (floatingBar) {
-          floatingBar.classList.add('hidden');
-          floatingBar.classList.remove('flex');
-        }
         editBtns.forEach(btn => {
           btn.classList.add('hidden');
           btn.classList.remove('flex');
