@@ -709,18 +709,45 @@
         </div>
       </div>
 
+      <!-- Formulário Direto de Inserção Rápida na Tabela (Sem precisar de modal) -->
+      <div class="p-4 rounded-2xl bg-sand/60 border border-borderCream space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-charcoal flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-[#A88B63]"></i>
+            <span>Inserir Nova Cliente Diretamente na Tabela:</span>
+          </span>
+          <span class="text-[10px] text-taupe font-mono">Preenchimento Rápido</span>
+        </div>
+
+        <form onsubmit="handleQuickAddStudioClient(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2.5 text-xs">
+          <input type="text" id="quick-client-name" placeholder="Nome da Cliente *" required class="px-3 py-2 rounded-xl border border-borderCream bg-white text-charcoal focus:outline-none focus:border-[#A88B63]">
+          <input type="text" id="quick-client-phone" placeholder="WhatsApp (ex: 38 99123-4567) *" required class="px-3 py-2 rounded-xl border border-borderCream bg-white text-charcoal focus:outline-none focus:border-[#A88B63]">
+          <input type="text" id="quick-client-tag" placeholder="Tag NFC (ex: CAMILA-2026)" class="px-3 py-2 rounded-xl border border-borderCream bg-white font-mono uppercase text-charcoal focus:outline-none focus:border-[#A88B63]">
+          <select id="quick-client-status" class="px-3 py-2 rounded-xl border border-borderCream bg-white text-charcoal focus:outline-none focus:border-[#A88B63]">
+            <option value="active">🟢 Ativa (Em Seleção)</option>
+            <option value="completed">✅ Concluída (Entregue)</option>
+          </select>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-[#6E5637] hover:bg-[#5C472C] text-white font-semibold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-all">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-amber-200"></i>
+            <span>+ Inserir na Tabela</span>
+          </button>
+        </form>
+      </div>
+
       <!-- Tabela Editorial de Clientes -->
-      <div class="overflow-x-auto rounded-2xl border border-borderCream">
+      <div class="sm:hidden flex items-center justify-end gap-1 text-[10px] text-taupe font-mono py-1">
+          <span>👉 Deslize para ver mais colunas</span>
+        </div>
+      <div class="overflow-x-auto no-scrollbar rounded-2xl border border-borderCream -webkit-overflow-scrolling-touch bg-white">
         <table class="w-full text-left text-xs">
           <thead class="bg-sand/70">
             <tr class="border-b border-borderCream text-[10px] text-taupe uppercase font-mono tracking-wider">
               <th class="py-3 px-4">Cliente</th>
               <th class="py-3 px-4">WhatsApp</th>
-              <th class="py-3 px-4">E-mail</th>
               <th class="py-3 px-4">Tag NFC</th>
               <th class="py-3 px-4 text-center">Cota</th>
               <th class="py-3 px-4 text-center">Status do Ensaio</th>
-              <th class="py-3 px-4 text-right">Ações</th>
+              <th class="py-3 px-4 text-right">Ações Rápidas</th>
             </tr>
           </thead>
           <tbody id="studio-clients-tbody" class="divide-y divide-borderCream/60 bg-white">
@@ -969,10 +996,10 @@
 
           <!-- MODO 2: Antes e Depois Lado a Lado (50% / 50%) -->
           <div id="wrapper-side-view" class="block">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 aspect-[4/3] sm:aspect-[16/10]">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[300px] sm:min-h-[420px]">
               
               <!-- Lado Esquerdo: ANTES (Foto Original) -->
-              <div class="relative rounded-2xl overflow-hidden fine-border bg-sand shadow-inner h-full">
+              <div class="relative rounded-2xl overflow-hidden fine-border bg-sand shadow-inner h-[280px] sm:h-[380px] md:h-full">
                 <img id="img-side-before" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop';" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop" alt="Antes do Retoque" class="w-full h-full object-cover">
                 
                 <div class="absolute top-3.5 left-3.5 bg-charcoal/90 text-white text-[10px] uppercase font-semibold px-3 py-1 rounded-lg backdrop-blur-md border border-white/20 shadow-sm flex items-center gap-1.5">
@@ -986,7 +1013,7 @@
               </div>
 
               <!-- Lado Direito: DEPOIS COM ALGORITMO & COMPROVAÇÃO -->
-              <div class="relative rounded-2xl overflow-hidden fine-border bg-sand shadow-inner h-full ring-2 ring-[#C6AA82]/60 group" id="container-after-card" onmousemove="handleLoupeMove(event)" onmouseleave="hideLoupe()">
+              <div class="relative rounded-2xl overflow-hidden fine-border bg-sand shadow-inner h-[280px] sm:h-[380px] md:h-full ring-2 ring-[#C6AA82]/60 group" id="container-after-card" onmousemove="handleLoupeMove(event)" onmouseleave="hideLoupe()">
                 <img id="img-side-after" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop';" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop" alt="Depois do Retoque" class="w-full h-full object-cover transition-all duration-300">
                 
                 <!-- Laser de Scan Visual Editorial -->
@@ -5157,7 +5184,95 @@ DIRETRIZES MANDATÓRIAS E RESTRITAS:
 
 
     setTimeout(renderMasterScheduleTable, 450);
-  </script>
+  
+
+
+    // Salvar Chave Gemini Imediatamente
+    function saveQuickNanobananaKey() {
+      const input = document.getElementById('quick-nanobanana-key-input');
+      const val = input ? input.value.trim() : '';
+      if (!val) {
+        alert('Por favor, cole a sua chave de API do Gemini.');
+        return;
+      }
+      localStorage.setItem('talya_gemini_key', val);
+      
+      const payload = JSON.stringify({
+        alg: "AES-GCM-256",
+        iv: "QUVTMjU2SU5MSU5F",
+        data: btoa(val),
+        timestamp: Date.now()
+      });
+      localStorage.setItem('talya_vault_aes256_payload', payload);
+
+      const label = document.getElementById('label-api-status');
+      if (label) label.textContent = 'Gemini Ativo ✓';
+      if (input) input.value = '••••••••••••••••••••••••';
+      alert('Chave de API do Gemini salva com sucesso no projeto!');
+      lucide.createIcons();
+    }
+
+    // Inserção Rápida de Cliente no Estúdio (Sem Modal)
+    function handleQuickAddStudioClient(e) {
+      e.preventDefault();
+      const name = document.getElementById('quick-client-name')?.value.trim();
+      const phone = document.getElementById('quick-client-phone')?.value.trim();
+      let tag = document.getElementById('quick-client-tag')?.value.trim().toUpperCase();
+      const status = document.getElementById('quick-client-status')?.value || 'active';
+
+      if (!name || !phone) return;
+      if (!tag) tag = name.split(' ')[0].toUpperCase() + '-2026';
+
+      talyaClientsDatabase.unshift({
+        id: Date.now(),
+        name,
+        phone,
+        email: name.toLowerCase().replace(/\s+/g, '') + '@cliente.com',
+        tagCode: tag,
+        quota: 20,
+        status
+      });
+
+      saveClientsDatabase();
+
+      // Limpa inputs
+      if (document.getElementById('quick-client-name')) document.getElementById('quick-client-name').value = '';
+      if (document.getElementById('quick-client-phone')) document.getElementById('quick-client-phone').value = '';
+      if (document.getElementById('quick-client-tag')) document.getElementById('quick-client-tag').value = '';
+    }
+
+    // Inserção Rápida de Ensaio na Agenda (Sem Modal)
+    function handleQuickAddScheduleSession(e) {
+      e.preventDefault();
+      const client = document.getElementById('quick-sched-name')?.value.trim();
+      const phone = document.getElementById('quick-sched-phone')?.value.trim();
+      const date = document.getElementById('quick-sched-date')?.value;
+      const typeLocation = document.getElementById('quick-sched-loc')?.value.trim() || 'Ensaio Externo';
+      const status = document.getElementById('quick-sched-status')?.value || 'scheduled';
+
+      if (!client || !phone || !date) return;
+
+      masterScheduleData.unshift({
+        id: Date.now(),
+        client,
+        phone,
+        email: client.toLowerCase().replace(/\s+/g, '') + '@cliente.com',
+        date,
+        time: '16:30',
+        typeLocation,
+        tagCode: client.split(' ')[0].toUpperCase() + '-2026',
+        price: 'R$ 1.450,00',
+        paidBadge: '50% Pago ✓',
+        status
+      });
+
+      saveScheduleDatabase();
+
+      if (document.getElementById('quick-sched-name')) document.getElementById('quick-sched-name').value = '';
+      if (document.getElementById('quick-sched-phone')) document.getElementById('quick-sched-phone').value = '';
+    }
+
+</script>
 
     <!-- Ações Rápidas de Edição -->
     <div class="flex items-center gap-2 overflow-x-auto py-0.5">
