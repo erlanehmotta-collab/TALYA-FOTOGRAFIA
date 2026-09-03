@@ -664,6 +664,74 @@
       </div>
     </div>
 
+    
+    <!-- ========================================================== -->
+    <!-- TABELA DE GESTÃO DE CLIENTES: ATIVAS & JÁ CONCLUÍDAS -->
+    <!-- ========================================================== -->
+    <div class="mt-8 bg-white rounded-3xl p-6 sm:p-8 fine-border shadow-sm space-y-6">
+      
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-borderCream">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-[#6E5637] text-white flex items-center justify-center shadow-xs">
+              <i data-lucide="users" class="w-4 h-4 text-amber-200"></i>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-charcoal">Gestão de Clientes da Talya</h3>
+            <span class="px-2.5 py-0.5 rounded-full bg-sand text-[#6E5637] border border-[#A88B63]/30 text-[10px] font-mono font-bold">
+              Painel de Ensaios
+            </span>
+          </div>
+          <p class="text-xs text-taupe">Acompanhe os ensaios abertos para seleção (Ativas) e os ensaios já finalizados e entregues (Concluídas).</p>
+        </div>
+
+        <button type="button" onclick="openClientRegistrationModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#6E5637] to-[#A88B63] hover:from-[#5C472C] hover:to-[#967B54] text-white text-xs font-semibold shadow-md flex items-center gap-2 cursor-pointer transition-all">
+          <i data-lucide="user-plus" class="w-4 h-4 text-amber-200"></i>
+          <span>Cadastrar Nova Cliente</span>
+        </button>
+      </div>
+
+      <!-- Filtros de Status com Contadores Vivos -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="inline-flex items-center gap-1.5 p-1 rounded-xl bg-sand/60 border border-borderCream text-xs">
+          <button type="button" onclick="filterClientsStudioTable('all')" id="btn-studio-filter-all" class="px-4 py-1.5 rounded-lg font-semibold bg-[#6E5637] text-white shadow-2xs transition-all">
+            Todas (<span id="studio-count-all">3</span>)
+          </button>
+          <button type="button" onclick="filterClientsStudioTable('active')" id="btn-studio-filter-active" class="px-4 py-1.5 rounded-lg font-medium text-taupe hover:text-charcoal transition-all">
+            🟢 Ativas / Em Seleção (<span id="studio-count-active">2</span>)
+          </button>
+          <button type="button" onclick="filterClientsStudioTable('completed')" id="btn-studio-filter-completed" class="px-4 py-1.5 rounded-lg font-medium text-taupe hover:text-charcoal transition-all">
+            ✅ Concluídas / Entregues (<span id="studio-count-completed">1</span>)
+          </button>
+        </div>
+
+        <div class="text-[11px] text-taupe font-mono">
+          💡 Clique no botão de status para alternar entre Ativa e Concluída
+        </div>
+      </div>
+
+      <!-- Tabela Editorial de Clientes -->
+      <div class="overflow-x-auto rounded-2xl border border-borderCream">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-sand/70">
+            <tr class="border-b border-borderCream text-[10px] text-taupe uppercase font-mono tracking-wider">
+              <th class="py-3 px-4">Cliente</th>
+              <th class="py-3 px-4">WhatsApp</th>
+              <th class="py-3 px-4">E-mail</th>
+              <th class="py-3 px-4">Tag NFC</th>
+              <th class="py-3 px-4 text-center">Cota</th>
+              <th class="py-3 px-4 text-center">Status do Ensaio</th>
+              <th class="py-3 px-4 text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="studio-clients-tbody" class="divide-y divide-borderCream/60 bg-white">
+            <!-- Renderizado dinamicamente via JS -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+
     <!-- Layout Grid: Formulário da Sessão + Ferramenta de Retoque de Pele -->
     <div class="grid lg:grid-cols-12 gap-8 pt-8">
       
@@ -4504,6 +4572,7 @@ DIRETRIZES MANDATÓRIAS E RESTRITAS:
         localStorage.setItem('talya_clients_db', JSON.stringify(clientsDatabase));
       } catch(e) {}
       renderMasterClientsTable();
+      renderStudioClientsTable();
     }
 
     function openClientRegistrationModal(editId) {
@@ -4598,6 +4667,110 @@ DIRETRIZES MANDATÓRIAS E RESTRITAS:
     }
 
 
+  
+
+
+    // ==========================================================
+    // RENDERIZAÇÃO DA TABELA DE CLIENTES NO ESTÚDIO TALYA
+    // ==========================================================
+    let studioClientsFilter = 'all';
+
+    function filterClientsStudioTable(status) {
+      studioClientsFilter = status;
+
+      ['all', 'active', 'completed'].forEach(s => {
+        const btn = document.getElementById('btn-studio-filter-' + s);
+        if (btn) {
+          if (s === status) {
+            btn.className = 'px-4 py-1.5 rounded-lg font-semibold bg-[#6E5637] text-white shadow-2xs transition-all';
+          } else {
+            btn.className = 'px-4 py-1.5 rounded-lg font-medium text-taupe hover:text-charcoal transition-all';
+          }
+        }
+      });
+
+      renderStudioClientsTable();
+    }
+
+    function renderStudioClientsTable() {
+      const tbody = document.getElementById('studio-clients-tbody');
+      const countAll = document.getElementById('studio-count-all');
+      const countActive = document.getElementById('studio-count-active');
+      const countCompleted = document.getElementById('studio-count-completed');
+
+      const activeList = clientsDatabase.filter(c => (c.status || 'active') === 'active');
+      const completedList = clientsDatabase.filter(c => c.status === 'completed');
+
+      if (countAll) countAll.textContent = clientsDatabase.length;
+      if (countActive) countActive.textContent = activeList.length;
+      if (countCompleted) countCompleted.textContent = completedList.length;
+
+      if (!tbody) return;
+
+      let filtered = clientsDatabase;
+      if (studioClientsFilter === 'active') filtered = activeList;
+      if (studioClientsFilter === 'completed') filtered = completedList;
+
+      tbody.innerHTML = filtered.map(c => {
+        const isActive = (c.status || 'active') === 'active';
+        const cleanPhone = (c.phone || '').replace(/\D/g, '');
+        const wppUrl = cleanPhone ? 'https://wa.me/55' + cleanPhone + '?text=' + encodeURIComponent('Olá ' + c.name + '! Aqui é a Talya Martins. Segue o link do seu ensaio para você selecionar as fotos: ' + window.location.origin + window.location.pathname + '?tag=' + c.tagCode) : '#';
+
+        return `
+          <tr class="hover:bg-sand/30 transition-colors">
+            <td class="py-3 px-4 font-medium text-charcoal">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}"></span>
+                <span class="font-semibold text-charcoal">${c.name}</span>
+              </div>
+            </td>
+            <td class="py-3 px-4 font-mono text-[11px]">
+              <a href="${wppUrl}" target="_blank" class="text-emerald-700 hover:text-emerald-900 inline-flex items-center gap-1 font-medium bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200/60" title="Conversar no WhatsApp e enviar link da Tag">
+                <i data-lucide="message-circle" class="w-3 h-3 text-emerald-600"></i>
+                <span>${c.phone}</span>
+              </a>
+            </td>
+            <td class="py-3 px-4 text-taupe font-sans">${c.email}</td>
+            <td class="py-3 px-4 font-mono font-bold text-[#6E5637]">
+              <span class="bg-sand/80 px-2 py-0.5 rounded-md border border-[#A88B63]/30">#${c.tagCode}</span>
+            </td>
+            <td class="py-3 px-4 text-center font-mono text-charcoal font-medium">${c.quota} fotos</td>
+            <td class="py-3 px-4 text-center">
+              <button type="button" onclick="toggleClientStatusAndRefresh(${c.id})" class="px-3 py-1 rounded-full text-[10px] font-bold transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer ${isActive ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200' : 'bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200'}" title="Clique para alternar entre Ativa e Concluída">
+                <span>${isActive ? '🟢 Ativa (Em Seleção)' : '✅ Concluída (Entregue)'}</span>
+              </button>
+            </td>
+            <td class="py-3 px-4 text-right">
+              <div class="inline-flex items-center gap-1">
+                <button onclick="editClientItem(${c.id})" class="p-1.5 rounded-lg hover:bg-sand text-taupe hover:text-charcoal transition-all" title="Editar Dados da Cliente">
+                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="copyClientNFCLink('${c.tagCode}')" class="p-1.5 rounded-lg hover:bg-sand text-taupe hover:text-[#A88B63] transition-all" title="Copiar Link NFC da Cliente">
+                  <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="deleteClientItemAndRefresh(${c.id})" class="p-1.5 rounded-lg hover:bg-rose-50 text-taupe hover:text-rose-600 transition-all" title="Excluir Cadastro">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function toggleClientStatusAndRefresh(clientId) {
+      toggleClientStatus(clientId);
+      renderStudioClientsTable();
+    }
+
+    function deleteClientItemAndRefresh(clientId) {
+      deleteClientItem(clientId);
+      renderStudioClientsTable();
+    }
+
+
+    setTimeout(renderStudioClientsTable, 450);
   </script>
 
 
