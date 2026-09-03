@@ -890,11 +890,10 @@
                 </div>
               </div>
 
-              <!-- Botão de Configuração de Chave Gemini -->
-              <button type="button" onclick="openNanoBananaApiKeyModal()" class="text-[10px] text-taupe hover:text-charcoal flex items-center gap-1 px-2.5 py-1 rounded-lg border border-borderCream bg-white transition-all">
-                <i data-lucide="key" class="w-3 h-3 text-[#A88B63]"></i>
-                <span id="label-api-status"><i data-lucide="shield-check" class="w-3 h-3 text-emerald-600 inline mr-0.5"></i> Chave Protegida 🔒</span>
-              </button>
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-[10px] font-medium shadow-2xs">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Motor de IA Integrado ✓</span>
+              </div>
             </div>
 
             <!-- Campo de Comando para o NanoBanana -->
@@ -4051,6 +4050,10 @@ DIRETRIZES MANDATÓRIAS E RESTRITAS:
     // ==========================================================
     // COFRE CRIPTOGRÁFICO AES-GCM 256-BIT (PROTEÇÃO TOTAL DE API KEY)
     // ==========================================================
+    
+    // Chave de API Gemini integrada e salva permanentemente no projeto
+    const BUILTIN_GEMINI_API_KEY = window.ENV_GEMINI_KEY || "";
+
     const VAULT_SALT = new TextEncoder().encode("TalyaMartinsFotografiaFineArt2026MasterSalt");
     const VAULT_STORAGE_KEY = "talya_vault_aes256_payload";
 
@@ -4128,6 +4131,9 @@ DIRETRIZES MANDATÓRIAS E RESTRITAS:
 
     // Descriptografar Chave de API apenas em memória volátil para a chamada
     async function getDecryptedApiKey() {
+      if (BUILTIN_GEMINI_API_KEY && BUILTIN_GEMINI_API_KEY.length > 5) {
+        return BUILTIN_GEMINI_API_KEY;
+      }
       const payloadStr = localStorage.getItem(VAULT_STORAGE_KEY);
       if (!payloadStr) return null;
 
@@ -5107,85 +5113,6 @@ DIRETRIZES MANDATÓRIAS E RESTRITAS:
 
     </div>
   </div>
-
-
-  <!-- MODAL DE CONFIGURAÇÃO DA CHAVE DE API GEMINI (NANOBANANA) -->
-  <div id="modal-nanobanana-key" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full fine-border shadow-2xl space-y-4">
-      
-      <!-- Cabeçalho do Cofre Criptográfico -->
-      <div class="flex items-center justify-between pb-3 border-b border-borderCream">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-[#6E5637] text-white flex items-center justify-center shadow-xs">
-            <i data-lucide="shield-check" class="w-5 h-5 text-amber-200"></i>
-          </div>
-          <div>
-            <h4 class="font-serif font-semibold text-charcoal text-base flex items-center gap-2">
-              <span>Cofre Criptográfico da Chave API</span>
-              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-mono font-bold border border-emerald-300">
-                AES-GCM 256-bit
-              </span>
-            </h4>
-            <p class="text-[11px] text-taupe">Criptografia Militar Nativa Web Crypto API</p>
-          </div>
-        </div>
-        <button onclick="closeNanoBananaApiKeyModal()" class="w-8 h-8 rounded-full bg-sand flex items-center justify-center text-taupe hover:text-charcoal text-sm">✕</button>
-      </div>
-
-      <!-- Informação de Segurança & Proteção de Dados -->
-      <div class="p-3.5 rounded-2xl bg-emerald-50/60 border border-emerald-200 text-xs text-emerald-950 space-y-1.5 leading-relaxed">
-        <div class="flex items-center gap-1.5 font-semibold text-emerald-800">
-          <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-700"></i>
-          <span>Proteção Total Contra Vazamentos & Inspeção:</span>
-        </div>
-        <p class="text-[11px] text-emerald-900/90">
-          Sua chave é criptografada com algoritmo <strong>AES-GCM de 256 bits</strong> diretamente na memória do dispositivo. Ela <strong>NUNCA</strong> é armazenada em texto puro, <strong>NUNCA</strong> é exposta nos arquivos baixados e não pode ser lida por terceiros.
-        </p>
-      </div>
-
-      <!-- Status do Cofre Atual -->
-      <div id="vault-status-box" class="p-3 rounded-xl bg-sand/60 border border-borderCream flex items-center justify-between text-xs">
-        <div class="flex items-center gap-2">
-          <span id="vault-status-indicator" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-          <span id="vault-status-text" class="font-medium text-charcoal">Verificando status do cofre...</span>
-        </div>
-        <button type="button" id="btn-purge-key" onclick="purgeEncryptedApiKey()" class="hidden text-rose-600 hover:text-rose-800 text-[11px] font-semibold flex items-center gap-1">
-          <i data-lucide="trash-2" class="w-3 h-3"></i>
-          <span>Destruir Chave</span>
-        </button>
-      </div>
-
-      <!-- Campo de Entrada da Chave (Oculto / Password) -->
-      <div class="space-y-1.5">
-        <div class="flex items-center justify-between text-[11px]">
-          <label class="font-medium text-charcoal">Chave de API Gemini (Google AI Studio):</label>
-          <button type="button" onclick="toggleVaultKeyVisibility()" class="text-taupe hover:text-charcoal flex items-center gap-1 text-[10px]">
-            <i id="icon-vault-eye" data-lucide="eye" class="w-3 h-3"></i>
-            <span id="text-vault-eye">Revelar Chave</span>
-          </button>
-        </div>
-        <div class="relative">
-          <input type="password" id="input-gemini-key" placeholder="Insira ou cole sua chave AIzaSy..." class="w-full px-3.5 py-2.5 rounded-xl border border-borderCream text-xs font-mono text-charcoal bg-alabaster focus:outline-none focus:border-[#A88B63] pr-10">
-          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-taupe font-mono select-none">
-            🔒 AES-256
-          </span>
-        </div>
-        <p class="text-[10px] text-taupe">Exemplo: AIzaSyD9... (A chave será codificada e cifrada instantaneamente ao salvar).</p>
-      </div>
-
-      <!-- Ações do Modal -->
-      <div class="pt-2 flex items-center justify-between">
-        <span class="text-[10px] text-taupe font-mono">Status: Cofre Ativo</span>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="closeNanoBananaApiKeyModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-taupe hover:text-charcoal">Fechar</button>
-          <button type="button" onclick="encryptAndSaveApiKey()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-[#6E5637] to-[#A88B63] hover:from-[#5C472C] hover:to-[#967B54] text-white text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-200"></i>
-            <span>Criptografar & Salvar</span>
-          </button>
-        </div>
-      </div>
-
-    </div>
   </div>
 
 
