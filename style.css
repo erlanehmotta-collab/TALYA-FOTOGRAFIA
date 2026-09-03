@@ -9,14 +9,14 @@
   --bg-alabaster: #FFFFFF;
   --bg-sand: #FFFFFF;
   --bg-card: #FFFFFF;
-  --color-champagne: #C5A880;
-  --color-champagne-dark: #A88B63;
+  --color-champagne: #B89668;
+  --color-champagne-dark: #8C714D;
   --color-rose: #D8A48F;
   --color-blush: #EED9D1;
   --color-blush-soft: #F9F2EE;
-  --color-charcoal: #23201D;
-  --color-taupe: #7A746E;
-  --border-cream: #EADFD7;
+  --color-charcoal: #1A1715;
+  --color-taupe: #544C45;
+  --border-cream: #D4C5B9;
   --border-rose: #E8CEC4;
   
   /* Sombras Difusas e Elegantes (Vogue Editorial) */
@@ -276,3 +276,27 @@ img {
   object-fit: contain !important;
 }
 
+
+
+/* ==========================================================================
+   MELHORIA DE 1 TOM EM TODA A PÁGINA (CONTRASTE & MÁXIMA NITIDEZ EDITORIAL)
+   ========================================================================== */
+.text-taupe {
+  color: #544C45 !important;
+}
+
+.text-charcoal {
+  color: #1A1715 !important;
+}
+
+.border-borderCream {
+  border-color: #D4C5B9 !important;
+}
+
+.fine-border {
+  border: 1px solid #D4C5B9 !important;
+}
+
+p, span, label, input, button {
+  text-rendering: optimizeLegibility;
+}
